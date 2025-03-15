@@ -1,5 +1,6 @@
 ﻿using FullstackAPI.Data;
 using FullstackAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FullstackAPI.Repositories
 {
@@ -7,34 +8,38 @@ namespace FullstackAPI.Repositories
 	{
 		private readonly StoreContext _dbContext;
 
-		public Task<IEnumerable<Product>> GetAllAsync()
+		public ProductRepository(StoreContext dbContext)
 		{
-			throw new NotImplementedException();
+			_dbContext = dbContext;
 		}
-
-		public Task<Product?> GetByIdAsync(int id)
+		public async Task<IEnumerable<Product>> GetAllAsync()
 		{
-			throw new NotImplementedException();
+			return await _dbContext.Products.ToListAsync();
 		}
-
-		public Task<Product?> GetByNameAsync(string name)
+		public async Task<Product?> GetByIdAsync(int id)
 		{
-			throw new NotImplementedException();
+			var product = await _dbContext.Products.FindAsync(id);
+			return product;
 		}
-
-		public Task AddAsync(Product product)
+		public async Task<Product?> GetByNameAsync(string name)
 		{
-			throw new NotImplementedException();
+			var product = await _dbContext.Products.FindAsync(name);
+			return product;
 		}
-
-		public Task UpdateAsync(Product product)
+		public async Task AddAsync(Product product)
 		{
-			throw new NotImplementedException();
+			_dbContext.Products.Add(product); 
+			await _dbContext.SaveChangesAsync();
 		}
-
-		public Task DeleteAsync(int id)
+		public async Task UpdateAsync(Product product)
 		{
-			throw new NotImplementedException();
+			_dbContext.Update(product);
+			await _dbContext.SaveChangesAsync();
+		}
+		public async Task DeleteAsync(int id)
+		{
+			_dbContext.Remove(id);
+			await _dbContext.SaveChangesAsync();
 		}
 	}
 }

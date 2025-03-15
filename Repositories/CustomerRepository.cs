@@ -1,38 +1,44 @@
 ﻿using FullstackAPI.Data;
 using FullstackAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace FullstackAPI.Repositories;
 
 public class CustomerRepository : ICustomerRepository
 {
 	private readonly StoreContext _dbContext;
-	public Task AddAsync(Customer customer)
-	{
-		throw new NotImplementedException();
-	}
 
-	public Task DeleteAsync(int id)
+	public CustomerRepository(StoreContext dbContext)
 	{
-		throw new NotImplementedException();
+		_dbContext = dbContext;
 	}
-
-	public Task<IEnumerable<Customer>> GetAllAsync()
+	public async Task<IEnumerable<Customer>> GetAllAsync()
 	{
-		throw new NotImplementedException();
+		return await _dbContext.Customers.ToListAsync();
 	}
-
-	public Task<Customer?> GetByIdAsync(int id)
+	public async Task<Customer?> GetByIdAsync(int id)
 	{
-		throw new NotImplementedException();
+		var customer = await _dbContext.Customers.FindAsync(id);
+		return customer;
 	}
-
-	public Task<Product?> GetByEmailAsync(string email)
+	public async Task<Customer?> GetByEmailAsync(string email)
 	{
-		throw new NotImplementedException();
+		var customer = await _dbContext.Customers.FindAsync(email);
+		return customer;
 	}
-
-	public Task UpdateAsync(Customer customer)
+	public async Task AddAsync(Customer customer)
 	{
-		throw new NotImplementedException();
+		_dbContext.Add(customer);
+		await _dbContext.SaveChangesAsync();
+	}
+	public async Task UpdateAsync(Customer customer)
+	{
+		_dbContext.Update(customer);
+		await _dbContext.SaveChangesAsync();
+	}
+	public async Task DeleteAsync(int id)
+	{
+		_dbContext.Remove(id);
+		await _dbContext.SaveChangesAsync();
 	}
 }

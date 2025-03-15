@@ -12,4 +12,4 @@ public interface IProductRepository
 	Task DeleteAsync(int id);
 }
 
- 
+  
