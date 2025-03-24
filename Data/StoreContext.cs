@@ -21,19 +21,13 @@ public class StoreContext : DbContext
     {
         modelBuilder.Entity<OrderProducts>()
             .HasOne(op => op.Order)
-            .WithMany(o => o.OrderProducts)
+            .WithMany(o => o.Products)
             .HasForeignKey(op => op.OrderId);
 
         modelBuilder.Entity<OrderProducts>()
             .HasOne(op => op.Product)
             .WithMany()
             .HasForeignKey(p => p.ProductId);
-
-        modelBuilder.Entity<Order>()
-            .HasOne(o => o.Customer)
-            .WithMany(c => c.Orders)
-            .HasForeignKey(c => c.CustomerId);
-
 
         base.OnModelCreating(modelBuilder);
     }

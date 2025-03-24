@@ -1,7 +1,10 @@
-﻿namespace FullstackAPI.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace FullstackAPI.Models;
 
 public class Product
 {
+	[JsonIgnore]
 	public int Id { get; set; }
 	public required string ProductName { get; set; }
 	public string? Brand { get; set; }

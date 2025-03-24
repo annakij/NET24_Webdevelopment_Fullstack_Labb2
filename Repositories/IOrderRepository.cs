@@ -5,7 +5,8 @@ namespace FullstackAPI.Repositories;
 public interface IOrderRepository
 {
 	Task<IEnumerable<Order>> GetAllAsync();
+	Task<IEnumerable<Order>> GetByCustomerAsync(int id);
 	Task<Order?> GetByIdAsync(int id);
-	Task PlaceOrder(Product product, Customer customer);
+	Task AddOrderAsync(int customerId, List<OrderProductRequest> products);
 	Task DeleteAsync(int id);
 }

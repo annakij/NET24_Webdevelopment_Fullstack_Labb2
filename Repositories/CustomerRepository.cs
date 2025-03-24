@@ -21,24 +21,42 @@ public class CustomerRepository : ICustomerRepository
 		var customer = await _dbContext.Customers.FindAsync(id);
 		return customer;
 	}
-	public async Task<Customer?> GetByEmailAsync(string email)
-	{
-		var customer = await _dbContext.Customers.FindAsync(email);
-		return customer;
-	}
+	public async Task<IEnumerable<Customer>> GetByEmailAsync(string email)
+{
+    var customers = await _dbContext.Customers
+        .Where(c => c.Email.Contains(email))
+        .ToListAsync();
+
+    return customers;
+}
+
 	public async Task AddAsync(Customer customer)
 	{
-		_dbContext.Add(customer);
+		_dbContext.Customers.Add(customer);
 		await _dbContext.SaveChangesAsync();
 	}
-	public async Task UpdateAsync(Customer customer)
+	public async Task UpdateAsync(int id, Customer updatedCustomer)
 	{
-		_dbContext.Update(customer);
+		var customer = await _dbContext.Customers.FindAsync(id);
+
+		customer.FirstName = ShouldUpdate(updatedCustomer.FirstName) ? updatedCustomer.FirstName : customer.FirstName;
+		customer.LastName = ShouldUpdate(updatedCustomer.LastName) ? updatedCustomer.LastName : customer.LastName;
+		customer.Email = ShouldUpdate(updatedCustomer.Email) ? updatedCustomer.Email : customer.Email;
+		customer.Phone = ShouldUpdate(updatedCustomer.Phone) ? updatedCustomer.Phone : customer.Phone;
+		customer.Address = ShouldUpdate(updatedCustomer.Address) ? updatedCustomer.Address : customer.Address;
+
 		await _dbContext.SaveChangesAsync();
 	}
+
+	private bool ShouldUpdate(string? value)
+	{
+		return !string.IsNullOrEmpty(value) && value != "string";
+	}
+
 	public async Task DeleteAsync(int id)
 	{
-		_dbContext.Remove(id);
+		var customer = await _dbContext.Customers.FindAsync(id);
+		_dbContext.Customers.Remove(customer);
 		await _dbContext.SaveChangesAsync();
 	}
 }

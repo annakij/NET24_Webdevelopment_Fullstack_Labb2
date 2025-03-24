@@ -18,7 +18,7 @@ public class ProductController : ControllerBase
     
     // GET: api/<ProductController>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<string>>> GetAllProducts()
+    public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
     {
         var products = await _productRepository.GetAllAsync();
         
@@ -31,7 +31,7 @@ public class ProductController : ControllerBase
 
     // GET api/<ProductController>/5
     [HttpGet("{id}")]
-    public async Task<ActionResult> GetProductById(int id)
+    public async Task<ActionResult<Product?>> GetProductById(int id)
     {
         var product =  await _productRepository.GetByIdAsync(id);
 
@@ -44,7 +44,7 @@ public class ProductController : ControllerBase
 
 	// GET api/<ProductController>/tanktop
 	[HttpGet("search-name/{name}")]
-	public async Task<ActionResult> GetProductByName(string name)
+	public async Task<ActionResult<Product?>> GetProductByName(string name)
 	{
 		var product = await _productRepository.GetByNameAsync(name);
 
@@ -57,7 +57,7 @@ public class ProductController : ControllerBase
 
 	// POST api/<ProductController>
 	[HttpPost]
-    public async Task<ActionResult<Product>> AddProduct(Product product)
+    public async Task<ActionResult> AddProduct(Product product)
     {
         await _productRepository.AddAsync(product);
 
@@ -68,12 +68,13 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
 	public async Task<ActionResult> UpdateProduct(int id, Product product)
 	{
-		if (id != product.Id)
-		{
-			return BadRequest();
-		}
+		var existingProduct = await _productRepository.GetByIdAsync(id);
+        if (existingProduct == null)
+        {
+            return NotFound("There is no product with that ID-number. Couldn't complete requested action.");
+        }
 
-		await _productRepository.UpdateAsync(product);
+		await _productRepository.UpdateAsync(id, product);
 		return NoContent();
 	}
 
@@ -84,7 +85,7 @@ public class ProductController : ControllerBase
 		var product = await _productRepository.GetByIdAsync(id);
 		if (product == null)
 		{
-			return NotFound("There is no product in stock with that ID-number");
+			return NotFound("There is no product in stock with that ID-number. Could not complete requested action.");
 		}
 
 		await _productRepository.DeleteAsync(id);

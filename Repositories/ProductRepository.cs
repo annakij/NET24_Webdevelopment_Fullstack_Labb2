@@ -21,24 +21,41 @@ namespace FullstackAPI.Repositories
 			var product = await _dbContext.Products.FindAsync(id);
 			return product;
 		}
-		public async Task<Product?> GetByNameAsync(string name)
+		public async Task<IEnumerable<Product?>> GetByNameAsync(string name)
 		{
-			var product = await _dbContext.Products.FindAsync(name);
-			return product;
+			var products = await _dbContext.Products
+				.Where(p => p.ProductName.Contains(name))
+				.ToListAsync();
+
+			return products;
 		}
 		public async Task AddAsync(Product product)
 		{
 			_dbContext.Products.Add(product); 
 			await _dbContext.SaveChangesAsync();
 		}
-		public async Task UpdateAsync(Product product)
+		public async Task UpdateAsync(int id, Product updatedProduct)
 		{
-			_dbContext.Update(product);
+			var product = await _dbContext.Products.FindAsync(id);
+
+			product.ProductName = ShouldUpdate(updatedProduct.ProductName) ? updatedProduct.ProductName : product.ProductName;
+			product.Brand = ShouldUpdate(updatedProduct.Brand) ? updatedProduct.Brand : product.Brand;
+			product.ProductDescription = ShouldUpdate(updatedProduct.ProductDescription) ? updatedProduct.ProductDescription : product.ProductDescription;
+			product.ProductCategory = ShouldUpdate(updatedProduct.ProductCategory) ? updatedProduct.ProductCategory : product.ProductCategory;
+			product.Price = updatedProduct.Price > 0 ? updatedProduct.Price : product.Price;
+			product.IsInStock = updatedProduct.IsInStock;
+
 			await _dbContext.SaveChangesAsync();
+		}
+
+		private static bool ShouldUpdate(string? value)
+		{
+			return !string.IsNullOrEmpty(value) && value != "string";
 		}
 		public async Task DeleteAsync(int id)
 		{
-			_dbContext.Remove(id);
+			var product = await _dbContext.Products.FindAsync(id);
+			_dbContext.Products.Remove(product);
 			await _dbContext.SaveChangesAsync();
 		}
 	}
