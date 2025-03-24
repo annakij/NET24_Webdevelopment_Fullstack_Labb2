@@ -10,5 +10,4 @@ public interface ICustomerRepository
 	Task AddAsync(Customer customer);
 	Task UpdateAsync(int id, Customer customer);
 	Task DeleteAsync(int id);
-
 }

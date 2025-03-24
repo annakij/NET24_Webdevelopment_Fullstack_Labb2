@@ -11,7 +11,6 @@ namespace FullstackAPI.Controllers;
 public class OrderController : ControllerBase
 {
 	private readonly IOrderRepository _orderRepository;
-
 	public OrderController(IOrderRepository orderRepository)
 	{
 		_orderRepository = orderRepository;
@@ -31,7 +30,7 @@ public class OrderController : ControllerBase
     }
 
     // GET api/<OrderController>/5
-    [HttpGet("{id}")]
+    [HttpGet("search-by-customer/{id}")]
     public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByCustomer(int id)
     {
         var orders = await _orderRepository.GetByCustomerAsync(id);
@@ -72,7 +71,6 @@ public class OrderController : ControllerBase
 
 		return Ok(order);
 	}
-
 
 	// DELETE api/<OrderController>/5
 	[HttpDelete("{id}")]

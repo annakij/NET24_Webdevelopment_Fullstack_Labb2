@@ -40,10 +40,8 @@ public class OrderRepository : IOrderRepository
 			CustomerId = customerId,
 			OrderDate = DateTime.UtcNow,
 		};
-
 		_dbContext.Orders.Add(newOrder);
 		await _dbContext.SaveChangesAsync();
-
 
 		var orderProducts = orderProductRequests.Select(p => new OrderProducts
 		{
@@ -51,7 +49,6 @@ public class OrderRepository : IOrderRepository
 			Quantity = p.Quantity,
 			OrderId = newOrder.Id 
 		}).ToList();
-
 		_dbContext.OrderProducts.AddRange(orderProducts);
 		await _dbContext.SaveChangesAsync();
 	}

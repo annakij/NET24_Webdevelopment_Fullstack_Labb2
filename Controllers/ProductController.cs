@@ -42,7 +42,7 @@ public class ProductController : ControllerBase
         return Ok(product);
     }
 
-	// GET api/<ProductController>/tanktop
+	// GET api/<ProductController>/top
 	[HttpGet("search-name/{name}")]
 	public async Task<ActionResult<Product?>> GetProductByName(string name)
 	{
